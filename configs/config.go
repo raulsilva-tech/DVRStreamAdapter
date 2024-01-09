@@ -5,10 +5,10 @@ import (
 )
 
 type Config struct {
-	Port        string `json:"port"`
-	Directory   string `json:"directory"`
-	DVRUser     string `json:"dvr_user"`
-	DVRPassword string `json:"dvr_password"`
+	Port        string `mapstructure:"PORT"`
+	Directory   string `mapstructure:"DIRECTORY"`
+	DVRUser     string `mapstructure:"DVR_USER"`
+	DVRPassword string `mapstructure:"DVR_PASSWORD"`
 }
 
 func LoadConfig(path string) (*Config, error) {

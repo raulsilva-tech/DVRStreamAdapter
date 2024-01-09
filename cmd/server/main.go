@@ -28,7 +28,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	vh := handlers.NewVideoHandler()
-	r.Get("/stream/{file_name}", vh.Stream)
+	r.Get("/stream/{host}/{port}/{channel}/{start_time}/{end_time}", vh.Stream)
 
 	log.Printf("Serving on HTTP port: %s \n", cfg.Port)
 	//starting the server
