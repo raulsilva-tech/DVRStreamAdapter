@@ -60,7 +60,7 @@ func (vh *VideoHandler) Stream(w http.ResponseWriter, r *http.Request) {
 	url := "http://" + cfg.DVRUser + ":" + cfg.DVRPassword + "@" + host + ":" + port + "/cgi-bin/loadfile.cgi?action=startLoad&channel=" + channel + "&startTime=" + startTime + "&endTime=" + endTime + "&Types=mp4"
 	url = strings.Replace(url, " ", "%20", -1)
 
-	fmt.Println(url)
+	//fmt.Println(url)
 
 	dvrBody, err := onlyRequest(url)
 	if err != nil {
@@ -72,14 +72,12 @@ func (vh *VideoHandler) Stream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reader := bytes.NewReader(dvrBody)
-
 	w.Header().Set("Content-Length", fmt.Sprint(len(dvrBody)))
 	w.Header().Set("Accept-Ranges", "bytes")
 	w.Header().Set("Content-Type", "video/mp4")
-	buffer := make([]byte, 64*1024) // 64KB buffer size
-	io.CopyBuffer(w, reader, buffer)
-	// io.Copy(w,file)
+
+	src := bytes.NewBuffer(dvrBody)
+	io.Copy(w, src)
 
 }
 
@@ -95,12 +93,15 @@ func onlyRequest(url string) ([]byte, error) {
 			DisableCompression: true,
 		},
 	}
+
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer res.Body.Close()
+
 	dvrBody, err := io.ReadAll(res.Body)
+
 	if err != nil {
 		return nil, err
 	}
